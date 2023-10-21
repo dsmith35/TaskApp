@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}New Project{% endblock %}
+
+{% block content %}
+<form method="POST">
+    <h3 align="center">New Project</h3>
+    <div class="container">
+    <hr>
+    <center>	
+                <input type="text" id="name" placeholder="Project Name">
+                <label for="sdate">Start date:</label>
+                <input type="date" id="sDate">
+                <label for="deadline">Deadline:</label>
+                <input type="date" id="deadline">
+    </div></center>
+        <center>
+            <textarea id="description" placeholder="Description of Project" cols="30" rows="10" onClick="myObj.textSelect(this)"> Description of Project</textarea>
+              
+
+            </div>
+            </div></center>
+
+
+            <center>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Assign Tasks</button>
+                <button type="submit" class="btn btn-primary">Assign Team Roles</button>
+                </form>
+            </section>
+    
+        <script src="src/ObjectApp.js"></script>
+        </center>
+        </body>
+        
+    
+</html>
+
+{% endblock %}
