@@ -13,7 +13,7 @@ def register():
         name = request.form.get('name')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-
+        # checks everything is good before registering
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already in database', category='error')
@@ -37,7 +37,7 @@ def register():
             
             
     return render_template("register.html", user=current_user)
-
+# checks everything is good before allowing user to login
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method =='POST':
