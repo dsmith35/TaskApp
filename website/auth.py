@@ -140,7 +140,7 @@ def new_project():
             db.session.add(new_project)
             db.session.commit()
 
-            flash(f'"{name}" created successfully', category='success')
+            flash(f'New Project "{name}" created successfully', category='success')
             return redirect(url_for('auth.projectManager'))
 
     return render_template("newProject.html", user=current_user)
