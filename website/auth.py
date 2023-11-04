@@ -83,10 +83,13 @@ def new_task():
             flash('Start date is required', category='error')
         elif not deadline:
             flash('Deadline is required', category='error')
+        elif start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
             deadline = datetime.strptime(deadline, '%Y-%m-%d')
+
             new_task = Task(
                 name=name,
                 assignee=assignee,
@@ -118,6 +121,8 @@ def new_project():
             flash('Start date is required', category='error')
         elif not deadline:
             flash('Deadline is required', category='error')
+        elif start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
