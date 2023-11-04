@@ -63,7 +63,8 @@ def taskManager():
 
 @auth.route('/projectmanager')
 def projectManager():
-    return render_template("projectManager.html", user=current_user)
+    projects = Project.query.all()
+    return render_template("projectManager.html", user=current_user, projects=projects)
 
 @auth.route('/newtask')
 def newTask():

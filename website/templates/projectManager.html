@@ -2,13 +2,18 @@
 {% block title %}Project Manager{% endblock %}
 
 {% block content %}
-<form method="POST">
-    <h3 align="center">Project Manager</h3>
+
+<h3 align="center">Project Manager</h3>
     <div class="container">
     <hr>
-    <h1 align="center"> Your Projects: </h1>
-    <h6 align="center">  Please select a Project </h6>
-
+    <h1 align="center" id="project-name"> Select a Project: </h1>
+    <p align="center" id="project-info">  </p>
+    <ul style="list-style-type: none">
+        {% for prj in projects %}
+            <li> <button type="button" class="btn btn-primary btn-lg project-button" data-name="{{ prj.name }}" data-info="{{ prj.info }}">{{ prj.name }}</button></li>
+        {% endfor %}
+    </ul>
+<form method="POST">
             <center>
                 <button type="button" class="btn btn-primary">Monitor Project Progress</button>
                 <button type="button" class="btn btn-primary">Edit Project</button>
@@ -17,11 +22,24 @@
                 <button type="button" class="btn btn-primary">Set Priority</button>
                 </form>
             </section>
-    
-        <script src="src/ObjectApp.js"></script>
+
         </center>
         </body>
         
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const projectButtons = document.querySelectorAll(".project-button");
+            const projectName = document.getElementById("project-name");
+            const projectInfo = document.getElementById("project-info");
+    
+            projectButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    projectName.innerHTML = `<h1>${this.getAttribute("data-name")}</h1>`;
+                    projectInfo.innerHTML = `<p>${this.getAttribute("data-info")}</p>`;
+                });
+            });
+        });
+    </script>
     
 </html>
 
