@@ -33,6 +33,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
+            print("Logged in!")
             flash('Success! Your account has been created', category='success')
             return redirect(url_for('views.home'))
             
@@ -50,6 +51,7 @@ def login():
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
                 flash('Login Successful!', category='success')
+                print("Logged in!")
                 return redirect(url_for('views.home'))
             else:
                 flash('Login Failed!', category='error')
@@ -145,6 +147,7 @@ def new_project():
 @login_required
 def logout():
     logout_user()
+    print("Logged Out")
     return redirect(url_for('auth.login'))
 
 @auth.route('/view_users')
