@@ -10,7 +10,7 @@
     <p align="center" id="project-info">  </p>
     <ul style="list-style-type: none">
         {% for prj in projects %}
-            <li> <button type="button" class="btn btn-primary btn-lg project-button" data-name="{{ prj.name }}" data-info="{{ prj.info }}">{{ prj.name }}</button></li>
+            <li> <button type="button" class="btn btn-primary btn-lg project-button" data-name="{{ prj.name }}" data-info="{{ prj.description }}">{{ prj.name }}</button></li>
         {% endfor %}
     </ul>
 <form method="POST">
