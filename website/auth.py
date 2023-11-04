@@ -108,7 +108,7 @@ def new_task():
 def new_project():
     if request.method == 'POST':
         name = request.form.get('name')
-        start_date = request.form.get('start_date')
+        start_date = request.form.get('sdate')
         deadline = request.form.get('deadline')
         description = request.form.get('description')
 
@@ -135,7 +135,7 @@ def new_project():
             db.session.add(new_project)
             db.session.commit()
 
-            flash(f'New project "{name}" created successfully', category='success')
+            flash(f'"{name}" created successfully', category='success')
             return redirect(url_for('auth.projectManager'))
 
     return render_template("newProject.html", user=current_user)
