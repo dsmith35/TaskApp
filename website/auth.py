@@ -1,13 +1,7 @@
-<<<<<<< Updated upstream
-from flask import Blueprint, render_template, request, flash
-from flask_login import current_user
-from .models import *
-=======
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
->>>>>>> Stashed changes
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -39,14 +33,7 @@ def register():
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Success! Your account has been created', category='success')
-<<<<<<< Updated upstream
-            #add user to db
-            user = User(id=0,email=email,name=name,password=password1)
-            db.session.add(user)
-            db.session.commit()
-=======
             return redirect(url_for('views.home'))
->>>>>>> Stashed changes
             
             
     return render_template("register.html", user=current_user)
