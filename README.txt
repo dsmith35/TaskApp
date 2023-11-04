@@ -15,4 +15,11 @@ Run main.py
 
 open link: http://127.0.0.1:5000
 
+
+
+
+For Databases:
+
 Open link: http://127.0.0.1:5000/view_users to view objects in the database.
+
+To access the SQL db file, please go to: instance->database.db
