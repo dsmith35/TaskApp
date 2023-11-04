@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
-from .models import User
+from .models import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
@@ -69,8 +69,19 @@ def projectManager():
 def newTask():
     return render_template("newTask.html", user=current_user)
 
-@auth.route('/newproject')
+@auth.route('/newproject', methods=['GET', 'POST'])
 def newProject():
+    if request.method =='POST':
+        name = request.form.get('name')
+        # sdate = request.form.get('sdate')
+        # deadline = request.form.get('deadline')
+        info = request.form.get('description')
+        new_prj = Project(name=name, info=info)   
+        db.session.add(new_prj)
+        db.session.commit()
+        flash('Project Created!', category='success')
+        return redirect(url_for('views.home'))
+    
     return render_template("newProject.html", user=current_user)
 
 
@@ -83,4 +94,5 @@ def logout():
 @auth.route('/view_users')
 def view_users():
     users = User.query.all()
-    return render_template('view_users.html', user=current_user, users=users)
+    projects = Project.query.all()
+    return render_template('view_users.html', user=current_user, users=users, projects=projects)

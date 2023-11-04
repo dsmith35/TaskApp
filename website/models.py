@@ -7,18 +7,20 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), unique = True)
     name = db.Column(db.String(50))
     password = db.Column(db.String(50))
-    tasks = db.relationship('Task')
-    projects = db.relationship('Project')
+    # tasks = db.relationship('Task')
+    # projects = db.relationship('Project')
     
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     info = db.Column(db.String(9999))
     date = db.Column(db.DateTime(timezone=True), default=func.now)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
     info = db.Column(db.String(9999))
-    date = db.Column(db.DateTime(timezone=True), default=func.now)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    task_id = db.Column(db.String, db.ForeignKey('task.id'))
+    # sdate = db.Column(db.DateTime(timezone=True), default=func.now)
+    # deadline = db.Column(db.DateTime(timezone=True), default=func.now)
+    # users = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # tasks = db.Column(db.String, db.ForeignKey('task.id'))
