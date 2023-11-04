@@ -15,3 +15,4 @@ Run main.py
 
 open link: http://127.0.0.1:5000
 
+Open link: http://127.0.0.1:5000/view_users to view objects in the database.
