@@ -28,7 +28,7 @@ def register():
             flash('Password must contain more than six characters', category ='error')
 
         else:
-            new_user = User(email=email, name=name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
+            new_user = User(email=email, name=name, password=generate_password_hash(password1, method='pbkdf2:sha256'),projects=[])
             
             db.session.add(new_user)
             db.session.commit()
@@ -66,7 +66,8 @@ def taskManager():
 
 @auth.route('/projectmanager')
 def projectManager():
-    projects = Project.query.all()
+    projects = Project.query.filter(Project.users.any(id=current_user.id)).all()
+    # projects = Project.query.all()
     return render_template("projectManager.html", user=current_user, projects=projects)
 
 
@@ -135,7 +136,7 @@ def new_project():
                 start_date=start_date,
                 deadline=deadline,
                 description=description,
-                user_id=current_user.id,  # Assuming you use Flask-Login to get the current user
+                users=[current_user],  # Assuming you use Flask-Login to get the current user
                 task_id=None  # You can set task_id as needed
             )
 

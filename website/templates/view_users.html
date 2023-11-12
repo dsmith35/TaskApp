@@ -5,13 +5,13 @@
     <h1>Users</h1>
     <ul>
         {% for u in users %}
-            <li>{{ u.name }} (Id: {{ u.id }}) (Email: {{ u.email }})</li>
+            <li>{{ u.name }} (Id: {{ u.id }}) (Email: {{ u.email }}), Projects: {{users.projects}}</li>
         {% endfor %}
     </ul>
     <h2>Projects</h2>
     <ul>
         {% for prj in projects %}
-            <li>ID: {{ prj.id }}, Name: {{ prj.name }}, Info: {{ prj.description }}</li>
+            <li>ID: {{ prj.id }}, Name: {{ prj.name }}, Info: {{ prj.description }}, Deadline: {{prj.deadline}} Users: {{prj.users}}</li>
         {% endfor %}
     </ul>
 
