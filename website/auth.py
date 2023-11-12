@@ -163,10 +163,10 @@ def project(project_id):
     project = Project.query.filter(Project.id == project_id,).first()
     if not project:
         # project not found
-        return render_template('errors/error404.html', user=current_user)
+        return "Page Not Found", 404
     elif not any(user.id == current_user.id for user in project.users):
         # user doesn't have access
-        return render_template('errors/error403.html', user=current_user)
+        return "Access Denied", 403
     else:
         # return page
         return render_template('project.html', user=current_user, project=project)
