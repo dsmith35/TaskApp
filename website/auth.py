@@ -4,7 +4,6 @@ from .models import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from datetime import datetime
-
 auth = Blueprint('auth', __name__)
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -157,8 +156,21 @@ def logout():
     print("Logged Out")
     return redirect(url_for('auth.login'))
 
-@auth.route('/project/<project_id>')
+@auth.route('/project/<project_id>', methods=['GET', 'POST'])
 def project(project_id):
+    # for inviting new users
+    if request.method == 'POST':
+        new_user_email = request.form.get('new_user_email')
+        new_user = User.query.filter(User.email == new_user_email).first()
+        if new_user:
+            project = Project.query.filter(Project.id == project_id,).first()
+            project.users.append(new_user)
+            db.session.commit()
+            flash(f"Invited {new_user.name} to {project.name}", category="success")
+            print(f"Invited {new_user.name} to {project.name}")
+        else:
+            flash("User not found", category='error')
+    
     # query project with the project_id and where current_user.id is in the project.users list
     project = Project.query.filter(Project.id == project_id,).first()
     if not project:
