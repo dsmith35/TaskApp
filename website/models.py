@@ -17,6 +17,7 @@ class Task(db.Model):
     description = db.Column(db.String(9999))
     start_date = db.Column(db.DateTime(timezone=True), default=func.now)
     deadline = db.Column(db.DateTime(timezone=True), default=func.now)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Project(db.Model):
@@ -26,7 +27,7 @@ class Project(db.Model):
     deadline = db.Column(db.DateTime(timezone=True), default=func.now)
     description = db.Column(db.String(9999))
     users = db.relationship('User', secondary='project_user_association', back_populates='projects')
-    task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    tasks = db.relationship('Task', backref='project', lazy=True)
 
 project_user_association = db.Table('project_user_association',
     db.Column('project_id', db.Integer, db.ForeignKey('project.id')),

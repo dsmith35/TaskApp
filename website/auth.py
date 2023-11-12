@@ -100,6 +100,7 @@ def new_task():
                 start_date=start_date,
                 deadline=deadline,
                 user_id=current_user.id
+                # project_id=AAAAAAAAAAAAAAAAAAAAAA
             )
 
             db.session.add(new_task)
@@ -155,6 +156,20 @@ def logout():
     logout_user()
     print("Logged Out")
     return redirect(url_for('auth.login'))
+
+@auth.route('/project/<project_id>')
+def project(project_id):
+    # query project with the project_id and where current_user.id is in the project.users list
+    project = Project.query.filter(Project.id == project_id,).first()
+    if not project:
+        # project not found
+        return render_template('errors/error404.html', user=current_user)
+    elif not any(user.id == current_user.id for user in project.users):
+        # user doesn't have access
+        return render_template('errors/error403.html', user=current_user)
+    else:
+        # return page
+        return render_template('project.html', user=current_user, project=project)
 
 @auth.route('/view_users')
 def view_users():

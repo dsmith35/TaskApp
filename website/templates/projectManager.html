@@ -8,9 +8,11 @@
     <hr>
     <h1 align="center" id="project-name"> Select a Project: </h1>
     <p align="center" id="project-info">  </p>
+    <div align="center"><button id="open_prj_btn" type="button" style="display: none;">Open Project</button></div>
     <ul style="list-style-type: none">
         {% for prj in projects %}
-            <li> <button type="button" class="btn btn-primary btn-lg project-button" data-name="{{ prj.name }}" data-info="{{ prj.description }}">{{ prj.name }}</button></li>
+            <li> <button type="button" class="btn btn-primary btn-lg project-button" data-name="{{ prj.name }}" 
+                data-info="{{ prj.description }}" data-id="{{ prj.id }}">{{ prj.name }}"</button></li>
         {% endfor %}
     </ul>
 <form method="POST">
@@ -31,11 +33,15 @@
             const projectButtons = document.querySelectorAll(".project-button");
             const projectName = document.getElementById("project-name");
             const projectInfo = document.getElementById("project-info");
-    
+            let open_prj_btn = document.getElementById("open_prj_btn");
+
             projectButtons.forEach(button => {
                 button.addEventListener("click", function() {
                     projectName.innerHTML = `<h1>${this.getAttribute("data-name")}</h1>`;
                     projectInfo.innerHTML = `<p>${this.getAttribute("data-info")}</p>`;
+                    open_prj_btn.style="display: block;"
+                    open_prj_btn.onclick = () => {window.location.href = `project/${this.getAttribute("data-id")}`}
+                    btnArea.appendChild(open_prj_btn)
                 });
             });
         });
