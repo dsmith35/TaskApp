@@ -25,11 +25,11 @@
             <div class="task-box">
                 <h4>{{ task.name }}</h4>
                 <p>Start Date: {{ task.start_date.strftime('%Y-%m-%d') }} ----> End Date: {{ task.deadline.strftime('%Y-%m-%d') }}</p>
-                <p>{{ task.description }}</p>
+                <p>{{ task.description or "No description available" }}</p>
                 <div align="left">
-                    <button type="button" class="btn btn-success">Complete Task</button>
-                    <button type="button" class="btn btn-primary">Edit Task</button>
-                    <button type="button" class="btn btn-danger">Delete Task</button>
+                    <button type="button" class="btn btn-success btn-sm">Complete Task</button>
+                    <button type="button" class="btn btn-primary btn-sm">Edit Task</button>
+                    <button type="button" class="btn btn-danger btn-sm">Delete Task</button>
                 </div>
             </div>
         {% endfor %}
