@@ -1,37 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Project Manager{% endblock %}
+{% block title %}Project: {{ project.name }}{% endblock %}
 
 {% block content %}
 
-Project tasks and options should appear here.
-
-<form method="POST">
-    <label>Invite User</label>
-    <input
-          type="email"
-          id="new_user_email"
-          name="new_user_email"
-          placeholder="Enter email"
-          style="width: 250px;"><button type="submit">Send</button>
-</form>
-
-<h3 align="center">{{ project.name }}</h3>
-<p align="center">{{ project.description }}</p>
-
-<!-- Button to navigate to the New Task page -->
-<a class="nav-item nav-link" href="{{ url_for('auth.new_task', project_id=project.id) }}">
-    <button class="btn btn-primary">New Task</button>
-</a>
-
-<!-- Display tasks -->
-{% for task in project.tasks %}
-    <div class="task-details">
-        <h4>{{ task.name }}</h4>
-        <p>Start Date: {{ task.start_date.strftime('%Y-%m-%d') }}</p>
-        <p>End Date: {{ task.deadline.strftime('%Y-%m-%d') }}</p>
-        <p>{{ task.description }}</p>
+<h3 align="center">Project Manager</h3>
+<div class="container">
+    <h1 align="center" id="project-name">{{ project.name }}</h1>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-{% endfor %}
+    <p align="center" id="project-description">{{ project.description }}</p>
 
+    <div align="center">
+        <!-- Button to navigate to the New Task page -->
+        <a class="nav-item nav-link" href="{{ url_for('auth.new_task', project_id=project.id) }}">
+            <button class="btn btn-primary">New Task</button>
+        </a>
+        <button type="button" class="btn btn-primary">Edit Project</button>
+        <button type="button" class="btn btn-danger">Delete Project</button>
+    </div>
+
+    <div class="tasks-container">
+        {% for task in project.tasks %}
+            <div class="task-box">
+                <h4>{{ task.name }}</h4>
+                <p>Start Date: {{ task.start_date.strftime('%Y-%m-%d') }} ----> End Date: {{ task.deadline.strftime('%Y-%m-%d') }}</p>
+                <p>{{ task.description }}</p>
+                <div align="left">
+                    <button type="button" class="btn btn-success">Complete Task</button>
+                    <button type="button" class="btn btn-primary">Edit Task</button>
+                    <button type="button" class="btn btn-danger">Delete Task</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
 
 {% endblock %}
