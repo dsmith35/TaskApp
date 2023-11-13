@@ -14,6 +14,9 @@ Project tasks and options should appear here.
           placeholder="Enter email"
         style="width: 250px;"><button type="submit">Send</button>
 </form>
+<a class="nav-item nav-link" id="task_manager" href="{{ url_for('auth.task_manager', project_id=project.id) }}">
+  <button class="btn btn-primary">New Task</button>
+</a>
 
 
 

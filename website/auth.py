@@ -182,6 +182,20 @@ def project(project_id):
     else:
         # return page
         return render_template('project.html', user=current_user, project=project)
+    
+@auth.route('project/<project_id>/task_manager')
+def task_manager(project_id):
+    # query project with the project_id and where current_user.id is in the project.users list
+    project = Project.query.filter(Project.id == project_id,).first()
+    if not project:
+        # project not found
+        return "Page Not Found", 404
+    elif not any(user.id == current_user.id for user in project.users):
+        # user doesn't have access
+        return "Access Denied", 403
+    else:
+        # return page
+        return render_template('taskManager.html', user=current_user, project=project)
 
 @auth.route('/view_users')
 def view_users():
