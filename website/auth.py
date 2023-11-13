@@ -183,8 +183,10 @@ def project(project_id):
         # return page
         return render_template('project.html', user=current_user, project=project)
     
-@auth.route('project/<project_id>/task_manager')
+@auth.route('project/<project_id>/newtask', methods=['GET', 'POST'])
 def task_manager(project_id):
+    # if request.method == 'POST':
+    #     task_name = request.form.get('new_user_email')
     # query project with the project_id and where current_user.id is in the project.users list
     project = Project.query.filter(Project.id == project_id,).first()
     if not project:
@@ -195,7 +197,7 @@ def task_manager(project_id):
         return "Access Denied", 403
     else:
         # return page
-        return render_template('taskManager.html', user=current_user, project=project)
+        return render_template('newTask.html', user=current_user, project=project)
 
 @auth.route('/view_users')
 def view_users():
