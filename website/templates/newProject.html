@@ -11,7 +11,8 @@
                 <label for="sdate">Start date:</label>
                 <input type="date" id="sdate" name="sdate">
                 <label for="deadline">Deadline:</label>
-                <input type="date" id="deadline" name="deadline">
+                <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
+                <input type="date" id="deadline" name="deadline" style="display: none;">
     </div></center>
         <center>
             <textarea id="description" name="description" placeholder="Description of Project" cols="30" rows="10" onClick="myObj.textSelect(this)"> Description of Project</textarea>
@@ -29,12 +30,29 @@
                 <button type="button" class="btn btn-primary">Set Priority</button>
                 </form>
             </section>
-    
-        <script src="src/ObjectApp.js"></script>
         </center>
-        </body>
-        
-    
+
+        <script>
+            function getCurrentDate() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            document.getElementById("sdate").value = getCurrentDate();
+
+            function toggleDeadline(checkbox) {
+                deadline_box = document.getElementById("deadline")
+                console.log(deadline_box.value)
+                if (checkbox.checked) {
+                    deadline_box.style="display: inline;"
+                }
+                else {
+                    deadline_box.style="display: none;"
+                }
+            }
+        </script>
 </html>
 
 {% endblock %}

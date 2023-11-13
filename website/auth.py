@@ -115,21 +115,21 @@ def new_project():
     if request.method == 'POST':
         name = request.form.get('name')
         start_date = request.form.get('sdate')
-        deadline = request.form.get('deadline')
+        use_deadline = request.form.get('use-deadline')
+        deadline = request.form.get('deadline') if use_deadline else None
         description = request.form.get('description')
 
         if not name:
             flash('Project name is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif not deadline:
-            flash('Deadline is required', category='error')
-        elif start_date >= deadline:
-            flash('Start date must be before the deadline', category='error')
+        elif deadline:
+            if start_date >= deadline:
+                flash('Start date must be before the deadline', category='error')
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            deadline = datetime.strptime(deadline, '%Y-%m-%d')
+            deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
 
             new_project = Project(
                 name=name,
@@ -137,7 +137,7 @@ def new_project():
                 deadline=deadline,
                 description=description,
                 users=[current_user],  # Assuming you use Flask-Login to get the current user
-                task_id=None  # You can set task_id as needed
+                tasks=[]  # You can set task_id as needed
             )
 
             db.session.add(new_project)
