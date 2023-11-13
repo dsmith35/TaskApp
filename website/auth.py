@@ -187,9 +187,9 @@ def new_task(project_id):
 
             db.session.add(new_task)
             db.session.commit()
-            return redirect(url_for('auth.project', project_id=project_id))
-
             flash(f'New task "{name}" created successfully', category='success')
+            return redirect(url_for('auth.project', project_id=project_id))
+        
     return render_template('newTask.html', user=current_user, project=project)
 
 

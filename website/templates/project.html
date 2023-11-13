@@ -21,7 +21,9 @@ Project tasks and options should appear here.
 
 <ul style="list-style-type: none">
   {% for tsk in tasks %}
-      <li> <div data-name="{{ tsk.name }}" data-info="{{ tsk.description }}" data-id="{{ tsk.id }}">{{ tsk.name }}</div></li>
+      <li> <div data-name="{{ tsk.name }}" data-info="{{ tsk.description }}" data-id="{{ tsk.id }}">
+        {{ tsk.name }}: Assignee: {{ tsk.assignee }}
+      </div></li>
   {% endfor %}
 </ul>
 
