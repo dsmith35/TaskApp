@@ -11,7 +11,17 @@
     <h2>Projects</h2>
     <ul>
         {% for prj in projects %}
-            <li>ID: {{ prj.id }}, Name: {{ prj.name }}, Info: {{ prj.description }}, Deadline: {{prj.deadline}} Users: {{prj.users}}</li>
+            <li>ID: {{ prj.id }}, Name: {{ prj.name }}, Info: {{ prj.description }}, Deadline: {{prj.deadline}} Users: {{prj.users}} 
+                Tasks: {{prj.tasks}}
+            </li>
+        {% endfor %}
+    </ul>
+    <h2>Tasks</h2>
+    <ul>
+        {% for tsk in tasks %}
+            <li>ID: {{ tsk.id }}, Name: {{ tsk.name }}, Asignee: {{tsk.assignee}}, Info: {{ tsk.description }}, 
+                Deadline: {{tsk.deadline}} Project: {{tsk.project}} 
+            </li>
         {% endfor %}
     </ul>
 
