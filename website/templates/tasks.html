@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %} Home {% endblock %}
+
+{% block content%}
+<h1 align="center"> Tasks </h1>
+<a class="nav-item nav-link" id="task_manager" href="{{ url_for('auth.new_task', project_id=project.id) }}">
+  <button class="btn btn-primary">New Task</button>
+</a>
+
+<ul style="list-style-type: none">
+    {% for tsk in tasks %}
+        <li> <div data-id="{{ tsk.id }}">
+            <div>
+                <input type="checkbox">
+                {{ tsk.description }}
+            </div>
+        </div></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

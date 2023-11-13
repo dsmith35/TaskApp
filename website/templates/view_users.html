@@ -12,14 +12,14 @@
     <ul>
         {% for prj in projects %}
             <li>ID: {{ prj.id }}, Name: {{ prj.name }}, Info: {{ prj.description }}, Deadline: {{prj.deadline}} Users: {{prj.users}} 
-                Tasks: {{prj.tasks}}
+                Tasks: {{prj.tasks}} isDefault: {{prj.is_default}} 
             </li>
         {% endfor %}
     </ul>
     <h2>Tasks</h2>
     <ul>
         {% for tsk in tasks %}
-            <li>ID: {{ tsk.id }}, Name: {{ tsk.name }}, Asignee: {{tsk.assignee}}, Info: {{ tsk.description }}, 
+            <li>ID: {{ tsk.id }}, Info: {{ tsk.description }} Asignee: {{tsk.assignee}}, 
                 Deadline: {{tsk.deadline}} Project: {{tsk.project}} 
             </li>
         {% endfor %}

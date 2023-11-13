@@ -7,15 +7,17 @@
     <div class="container">
     <hr>
     <center>
-                <input type="text" id="name" name="name" placeholder="Task Name">
-                <input type="text" id="assignee" name="assignee" placeholder="Assignee">
+                {% if not project.is_default %}
+                    <input type="text" id="assignee" name="assignee" placeholder="Assignee" value="{{current_user.name}}">
+                {% endif %}
                 <label for="sDate">Start date:</label>
                 <input type="date" id="sDate" name="start_date">
                 <label for="deadline">Deadline:</label>
-                <input type="date" id="deadline" name="deadline">
+                <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
+                <input type="date" id="deadline" name="deadline" style="display: none;">
     </div></center>
         <center>
-            <textarea id="description" placeholder="Description of Task" cols="30" rows="10" onClick="myObj.textSelect(this)"> Description of Task</textarea>
+            <textarea name="description" placeholder="Description of Task" cols="30" rows="10" onClick="myObj.textSelect(this)"></textarea>
 
 
             </div>
@@ -32,6 +34,28 @@
     <script src="src/ObjectApp.js"></script>
     </center>
     </body>
+
+    <script>
+        function getCurrentDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        document.getElementById("sDate").value = getCurrentDate(); //default start date
+
+        function toggleDeadline(checkbox) {
+            deadline_box = document.getElementById("deadline")
+            console.log(deadline_box.value)
+            if (checkbox.checked) {
+                deadline_box.style="display: inline;"
+            }
+            else {
+                deadline_box.style="display: none;"
+            }
+        }
+    </script>
 
 </html>
 
