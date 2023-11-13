@@ -28,6 +28,9 @@ def register():
 
         else:
             new_user = User(email=email, name=name, password=generate_password_hash(password1, method='pbkdf2:sha256'),projects=[])
+            default_project = Project(name=f"{name}'s Default Project", start_date=datetime.now(), deadline=datetime.now(), is_default=True)
+            default_project.users.append(new_user)
+            new_user.def_project = default_project
             
             db.session.add(new_user)
             db.session.commit()
@@ -65,71 +68,9 @@ def taskManager():
 
 @auth.route('/projectmanager')
 def projectManager():
-    projects = Project.query.filter(Project.users.any(id=current_user.id)).all()
+    projects = Project.query.filter(Project.users.any(id=current_user.id), ~Project.is_default).all()
     # projects = Project.query.all()
     return render_template("projectManager.html", user=current_user, projects=projects)
-
-
-@auth.route('/newtask', methods=['GET', 'POST'])
-def new_task():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        assignee = request.form.get('assignee')
-        description = request.form.get('description')
-        start_date = request.form.get('start_date')
-        use_deadline = request.form.get('use-deadline')
-        deadline = request.form.get('deadline') if use_deadline else None
-        project_id = request.form.get('project_id')  # Retrieve project_id from the form
-
-        if not name:
-            flash('Task name is required', category='error')
-        elif not start_date:
-            flash('Start date is required', category='error')
-        elif deadline and start_date >= deadline:
-            flash('Start date must be before the deadline', category='error')
-        else:
-            # Convert date strings to datetime objects
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
-
-            # Check if project_id is provided
-            if project_id:
-                # If project_id is provided, associate the task with the specified project
-                project = Project.query.get(int(project_id))
-                if project and current_user in project.users:
-                    new_task = Task(
-                        name=name,
-                        assignee=assignee,
-                        description=description,
-                        start_date=start_date,
-                        deadline=deadline,
-                        project_id=int(project_id)
-                    )
-                    db.session.add(new_task)
-                    db.session.commit()
-                    flash(f'New task "{name}" assigned to project "{project.name}" successfully', category='success')
-                    return redirect(url_for('auth.project', project_id=project_id))
-                else:
-                    flash('Invalid project selection or access denied', category='error')
-            else:
-                # If project_id is not provided, create a standalone task without associating it with any project
-                new_task = Task(
-                    name=name,
-                    assignee=assignee,
-                    description=description,
-                    start_date=start_date,
-                    deadline=deadline
-                )
-                db.session.add(new_task)
-                db.session.commit()
-                flash(f'New task "{name}" created successfully', category='success')
-                return redirect(url_for('auth.taskManager'))
-
-    # Provide the project_id to the template for creating the form
-    project_id = request.args.get('project_id')
-    return render_template("newTask.html", user=current_user, project_id=project_id)
-
-
 
 @auth.route('/newproject', methods=['GET', 'POST'])
 def new_project():
@@ -179,6 +120,25 @@ def logout():
 
 @auth.route('/project/<project_id>', methods=['GET', 'POST'])
 def project(project_id):
+
+    # see if project is default project
+    def_project = get_default_project()
+    if str(def_project.id) == project_id:
+        return redirect(url_for('auth.tasks'))
+    
+    # query project with the project_id and where current_user.id is in the project.users list
+    project = Project.query.filter(Project.id == project_id,).first()
+    if not project:
+        # project not found
+        return "Page Not Found", 404
+    elif not any(user.id == current_user.id for user in project.users):
+        # user doesn't have access
+        return "Access Denied", 403
+    
+    
+    # get tasks
+    tasks = Task.query.filter(Task.project_id == project_id).all()
+    
     # for inviting new users
     if request.method == 'POST':
         new_user_email = request.form.get('new_user_email')
@@ -192,34 +152,73 @@ def project(project_id):
         else:
             flash("User not found", category='error')
     
-    # query project with the project_id and where current_user.id is in the project.users list
-    project = Project.query.filter(Project.id == project_id,).first()
-    if not project:
-        # project not found
-        return "Page Not Found", 404
-    elif not any(user.id == current_user.id for user in project.users):
-        # user doesn't have access
-        return "Access Denied", 403
-    else:
-        # return page
-        return render_template('project.html', user=current_user, project=project)
+    # return page
+    return render_template('project.html', user=current_user, project=project, tasks=tasks)
     
-@auth.route('project/<project_id>/task_manager')
-def task_manager(project_id):
+@auth.route('project/<project_id>/newtask', methods=['GET', 'POST'])
+@auth.route('/tasks/newtask', methods=['GET', 'POST'], defaults={'project_id': None})
+def new_task(project_id):
+
+    def_project = get_default_project()
+    if not project_id:
+        project_id = def_project.id # Assume defualt project
+
     # query project with the project_id and where current_user.id is in the project.users list
-    project = Project.query.filter(Project.id == project_id,).first()
+    project = Project.query.filter(Project.id == project_id).first()
     if not project:
         # project not found
         return "Page Not Found", 404
     elif not any(user.id == current_user.id for user in project.users):
         # user doesn't have access
         return "Access Denied", 403
-    else:
-        # return page
-        return render_template('taskManager.html', user=current_user, project=project)
+    if request.method == 'POST':
+        assignee = request.form.get('assignee')
+        description = request.form.get('description')
+        start_date = request.form.get('start_date')
+        use_deadline = request.form.get('use-deadline')
+        deadline = request.form.get('deadline') if use_deadline else None
+
+        if not description:
+            flash('Task description is required', category='error')
+        elif not start_date:
+            flash('Start date is required', category='error')
+        elif deadline:
+            if start_date >= deadline:
+                flash('Start date must be before the deadline', category='error')
+        else:
+            # Convert date strings to datetime objects (sql will only accept like this)
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
+
+            new_task = Task(
+                assignee=assignee,
+                description=description,
+                start_date=start_date,
+                deadline=deadline,
+                project_id=project_id
+            )
+
+            db.session.add(new_task)
+            db.session.commit()
+            flash(f'New task created successfully', category='success')
+            return redirect(url_for('auth.project', project_id=project_id))
+        
+    return render_template('newTask.html', user=current_user, project=project)
+
+@auth.route('/tasks')
+def tasks():
+    def_project = get_default_project()
+    tasks = def_project.tasks
+    return render_template('tasks.html', user=current_user, project=def_project, tasks=tasks)
 
 @auth.route('/view_users')
 def view_users():
     users = User.query.all()
     projects = Project.query.all()
-    return render_template('view_users.html', user=current_user, users=users, projects=projects)
+    tasks  = Task.query.all()
+    return render_template('view_users.html', user=current_user, users=users, projects=projects, tasks=tasks)
+
+
+
+def get_default_project():
+    return Project.query.filter(Project.users.any(id=current_user.id), Project.is_default).first()
