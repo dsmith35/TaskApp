@@ -77,38 +77,59 @@ def new_task():
         assignee = request.form.get('assignee')
         description = request.form.get('description')
         start_date = request.form.get('start_date')
-        deadline = request.form.get('deadline')
+        use_deadline = request.form.get('use-deadline')
+        deadline = request.form.get('deadline') if use_deadline else None
+        project_id = request.form.get('project_id')  # Retrieve project_id from the form
 
         if not name:
             flash('Task name is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif not deadline:
-            flash('Deadline is required', category='error')
         elif start_date >= deadline:
             flash('Start date must be before the deadline', category='error')
         else:
-            # Convert date strings to datetime objects (sql will only accept like this)
+            # Convert date strings to datetime objects (SQLAlchemy will only accept datetime objects)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            deadline = datetime.strptime(deadline, '%Y-%m-%d')
+            deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else None
 
-            new_task = Task(
-                name=name,
-                assignee=assignee,
-                description=description,
-                start_date=start_date,
-                deadline=deadline,
-                user_id=current_user.id
-                # project_id=AAAAAAAAAAAAAAAAAAAAAA
-            )
+            # Check if project_id is provided
+            if project_id:
+                # If project_id is provided, associate the task with the specified project
+                project = Project.query.get(project_id)
+                if project in project.users:
+                    new_task = Task(
+                        name=name,
+                        assignee=assignee,
+                        description=description,
+                        start_date=start_date,
+                        deadline=deadline,
+                        project_id=project_id,
+                        user_id=current_user.id
+                    )
+                    db.session.add(new_task)
+                    db.session.commit()
+                    flash(f'New task "{name}" assigned to project "{project.name}" successfully', category='success')
+                    return redirect(url_for('auth.task_manager', project_id=project_id))
+                else:
+                    flash('Invalid project selection', category='error')
+            else:
+                # If project_id is not provided, create a standalone task without associating it with any project
+                new_task = Task(
+                    name=name,
+                    assignee=assignee,
+                    description=description,
+                    start_date=start_date,
+                    deadline=deadline,
+                    user_id=current_user.id
+                )
+                db.session.add(new_task)
+                db.session.commit()
+                flash(f'New task "{name}" created successfully', category='success')
+                return redirect(url_for('auth.taskManager'))
 
-            db.session.add(new_task)
-            db.session.commit()
-
-            flash(f'New task "{name}" created successfully', category='success')
-            return redirect(url_for('auth.taskManager'))
-
-    return render_template("newTask.html", user=current_user)
+    # Provide the project_id to the template for creating the form
+    project_id = request.args.get('project_id')
+    return render_template("newTask.html", user=current_user, project_id=project_id)
 
 @auth.route('/newproject', methods=['GET', 'POST'])
 def new_project():

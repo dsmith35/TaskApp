@@ -3,49 +3,60 @@
 
 {% block content %}
 
+<style>
+    /* Add some space below each project button */
+    .project-button {
+        margin-bottom: 10px;
+    }
+</style>
+
 <h3 align="center">Project Manager</h3>
-    <div class="container">
+<div class="container">
     <hr>
     <h1 align="center" id="project-name"> Select a Project: </h1>
     <p align="center" id="project-info">  </p>
     <div align="center" id="option-buttons" style="display: none;">
-        <div><button id="open_prj_btn" type="button" class="btn btn-primary">Open Project</button></div>
+        <button id="open_prj_btn" type="button" class="btn btn-primary">Open Project</button>
+        <button type="button" class="btn btn-secondary">Delete Project</button>
+        <button type="button" class="btn btn-secondary">Project Complete</button>
+        <button type="button" class="btn btn-secondary">Set Priority</button>
         <br>
-        <form method="POST">
-            <button type="button" class="btn btn-secondary">Edit Project</button>
-            <button type="button" class="btn btn-secondary">Delete Project</button>
-            <button type="button" class="btn btn-secondary">Project Complete</button>
-            <button type="button" class="btn btn-secondary">Set Priority</button>
-        </form>
     </div>
     <ul style="list-style-type: none">
         {% for prj in projects %}
-            <li> <button type="button" class="btn btn-primary btn-lg project-button" data-name="{{ prj.name }}" 
-                data-info="{{ prj.description }}" data-id="{{ prj.id }}">{{ prj.name }}</button></li>
+        <li>
+            <button type="button" class="btn btn-primary btn-lg project-button"
+                    data-name="{{ prj.name }}"
+                    data-info="{{ prj.description }}"
+                    data-id="{{ prj.id }}">
+                {{ prj.name }}
+            </button>
+        </li>
         {% endfor %}
     </ul>
-    </body>
-        
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const projectButtons = document.querySelectorAll(".project-button");
-            const projectName = document.getElementById("project-name");
-            const projectInfo = document.getElementById("project-info");
-            let open_prj_btn = document.getElementById("open_prj_btn");
-            const option_buttons = document.getElementById("option-buttons");
+</div>
+</body>
 
-            projectButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    projectName.innerHTML = `<h1>${this.getAttribute("data-name")}</h1>`;
-                    projectInfo.innerHTML = `<p>${this.getAttribute("data-info")}</p>`;
-                    option_buttons.style="display: block;"
-                    open_prj_btn.onclick = () => {window.location.href = `project/${this.getAttribute("data-id")}`}
-                    btnArea.appendChild(open_prj_btn)
-                });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const projectButtons = document.querySelectorAll(".project-button");
+        const projectName = document.getElementById("project-name");
+        const projectInfo = document.getElementById("project-info");
+        let open_prj_btn = document.getElementById("open_prj_btn");
+        const option_buttons = document.getElementById("option-buttons");
+
+        projectButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                projectName.innerHTML = `<h1>${this.getAttribute("data-name")}</h1>`;
+                projectInfo.innerHTML = `<p>${this.getAttribute("data-info")}</p>`;
+                option_buttons.style = "display: block;";
+                option_buttons.insertBefore(open_prj_btn, option_buttons.firstChild);
+                open_prj_btn.onclick = () => { window.location.href = `project/${this.getAttribute("data-id")}`; }
             });
         });
-    </script>
-    
+    });
+</script>
+
 </html>
 
 {% endblock %}
