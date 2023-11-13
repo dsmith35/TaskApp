@@ -126,6 +126,9 @@ def project(project_id):
         # user doesn't have access
         return "Access Denied", 403
     
+    # get tasks
+    tasks = Task.query.filter(Task.project_id == project_id).all()
+    
     # for inviting new users
     if request.method == 'POST':
         new_user_email = request.form.get('new_user_email')
@@ -140,7 +143,7 @@ def project(project_id):
             flash("User not found", category='error')
     
     # return page
-    return render_template('project.html', user=current_user, project=project)
+    return render_template('project.html', user=current_user, project=project, tasks=tasks)
     
 @auth.route('project/<project_id>/newtask', methods=['GET', 'POST'])
 def new_task(project_id):
@@ -184,6 +187,7 @@ def new_task(project_id):
 
             db.session.add(new_task)
             db.session.commit()
+            return redirect(url_for('auth.project', project_id=project_id))
 
             flash(f'New task "{name}" created successfully', category='success')
     return render_template('newTask.html', user=current_user, project=project)
