@@ -2,7 +2,7 @@
 {% block title %}New Task{% endblock %}
 
 {% block content %}
-<form method="POST">
+<form method="POST" action="{{ url_for('auth.new_task', project_id=project_id) }}">
     <h3 align="center">New Task</h3>
     <div class="container">
         <hr>
@@ -14,7 +14,7 @@
             <label for="use-deadline">Deadline:</label>
             <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
             <input type="date" id="deadline" name="deadline" style="display: none;">
-            <input type="hidden" id="projectId" name="projectId" value="{{ project_id }}">
+            <input type="hidden" name="project_id" value="{{ project_id }}">
         </center>
     </div>
 

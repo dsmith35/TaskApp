@@ -14,8 +14,24 @@ Project tasks and options should appear here.
           placeholder="Enter email"
           style="width: 250px;"><button type="submit">Send</button>
 </form>
-<a class="nav-item nav-link" id="new_task" href="{{ url_for('auth.new_task', project_id=project.id) }}">
-  <button class="btn btn-primary">New Task</button>
+
+<h3 align="center">{{ project.name }}</h3>
+<p align="center">{{ project.description }}</p>
+
+<!-- Button to navigate to the New Task page -->
+<a class="nav-item nav-link" href="{{ url_for('auth.new_task', project_id=project.id) }}">
+    <button class="btn btn-primary">New Task</button>
 </a>
+
+<!-- Display tasks -->
+{% for task in project.tasks %}
+    <div class="task-details">
+        <h4>{{ task.name }}</h4>
+        <p>Start Date: {{ task.start_date.strftime('%Y-%m-%d') }}</p>
+        <p>End Date: {{ task.deadline.strftime('%Y-%m-%d') }}</p>
+        <p>{{ task.description }}</p>
+    </div>
+{% endfor %}
+
 
 {% endblock %}
