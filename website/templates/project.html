@@ -24,8 +24,9 @@
         {% for task in project.tasks %}
             <div class="task-box">
                 <h4>{{ task.name }}</h4>
-                <p>Start Date: {{ task.start_date.strftime('%Y-%m-%d') }} ----> End Date: {{ task.deadline.strftime('%Y-%m-%d') }}</p>
-                <p>{{ task.description }}</p>
+                <div style="color: blue; font-size: small;">{{ task.start_date.strftime('%Y-%m-%d') }} ---> {{ task.deadline.strftime('%Y-%m-%d') }}</div>
+                <span>{{ task.description }}</span>
+                <span style="color: gray; font-size: small;">({{ task.assignee }})</span>
                 <div align="left">
                     <button type="button" class="btn btn-success">Complete Task</button>
                     <button type="button" class="btn btn-primary">Edit Task</button>

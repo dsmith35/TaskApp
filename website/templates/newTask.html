@@ -2,69 +2,61 @@
 {% block title %}New Task{% endblock %}
 
 {% block content %}
-<form method="POST" action="{{ url_for('auth.new_task', project_id=project_id) }}">
+<form method="POST">
     <h3 align="center">New Task</h3>
     <div class="container">
-        <hr>
+    <hr>
+    <center>
+                {% if not project.is_default %}
+                    <input type="text" id="assignee" name="assignee" placeholder="Assignee" value="{{current_user.name}}">
+                {% endif %}
+                <label for="sDate">Start date:</label>
+                <input type="date" id="sDate" name="start_date">
+                <label for="deadline">Deadline:</label>
+                <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
+                <input type="date" id="deadline" name="deadline" style="display: none;">
+    </div></center>
         <center>
-            <input type="text" id="taskName" name="name" placeholder="Task Name">
-            <input type="text" id="assignee" name="assignee" placeholder="Assignee">
-            <label for="sDate">Start date:</label>
-            <input type="date" id="sDate" name="start_date">
-            <label for="use-deadline">Deadline:</label>
-            <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
-            <input type="date" id="deadline" name="deadline" style="display: none;">
-            <input type="hidden" name="project_id" value="{{ project_id }}">
-        </center>
-    </div>
+            <textarea name="description" placeholder="Description of Task" cols="30" rows="10" onClick="myObj.textSelect(this)"></textarea>
 
-    <center>
-        <textarea id="description" placeholder="Description of Task" cols="30" rows="10" onClick="myObj.textSelect(this)"> Description of Task</textarea>
+
+            </div>
+            </div></center>
+
+        <center>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-primary">Subtask Creation</button>
+            <button type="button" class="btn btn-primary">Set Priority</button>
+            <button type="button" class="btn btn-primary">Assign to Project</button>
+            </form>
+        </section>
+
+    <script src="src/ObjectApp.js"></script>
     </center>
+    </body>
 
-    <center>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="button" class="btn btn-primary" onclick="assignToProject()">Assign to Project</button>
-        <button type="button" class="btn btn-primary">Set Priority</button>
-        <button type="button" class="btn btn-primary">Subtask Creation</button>
-    </center>
-</form>
-
-<script src="src/ObjectApp.js"></script>
-<script>
-    function getCurrentDate() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-    document.getElementById("sDate").value = getCurrentDate();
-
-    function toggleDeadline(checkbox) {
-        deadlineBox = document.getElementById("deadline");
-        console.log(deadlineBox.value);
-        if (checkbox.checked) {
-            deadlineBox.style.display = "inline";
-        } else {
-            deadlineBox.style.display = "none";
+    <script>
+        function getCurrentDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
-    }
+        document.getElementById("sDate").value = getCurrentDate(); //default start date
 
-    function assignToProject() {
-        // Assuming you have a hidden input field with id "projectId" to store the project ID
-        const projectId = document.getElementById("projectId").value;
+        function toggleDeadline(checkbox) {
+            deadline_box = document.getElementById("deadline")
+            console.log(deadline_box.value)
+            if (checkbox.checked) {
+                deadline_box.style="display: inline;"
+            }
+            else {
+                deadline_box.style="display: none;"
+            }
+        }
+    </script>
 
-        // Fill the "Assign to Project" button with the project ID
-        const assignToProjectButton = document.getElementById("assignToProjectButton");
-        assignToProjectButton.innerText = `Assign to Project: ${projectId}`;
-
-        // Automatically click the "Assign to Project" button
-        assignToProjectButton.click();
-    }
-
-</script>
-</body>
 </html>
 
 {% endblock %}
