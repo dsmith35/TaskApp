@@ -23,4 +23,5 @@ def test_newproject(client, app):
         assert bdata["name"] == "Johnn"
         assert bdata["description"] == "327FinalAsssignment"
         assert bdata["sdate"] < bdata["deadline"]
-        
+        assert bdata["sdate"] != ""
+        assert bdata["deadline"] != ""      
