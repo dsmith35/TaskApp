@@ -22,4 +22,5 @@ def test_newproject(client, app):
     with app.app_context():
         assert bdata["name"] == "Johnn"
         assert bdata["description"] == "327FinalAsssignment"
+        assert bdata["sdate"] < bdata["deadline"]
         
