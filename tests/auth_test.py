@@ -1,11 +1,14 @@
 import pytest
-from auth import User, register
+from website.auth import User, register
 from marshmallow import ValidationError
+
+
 
 @pytest.mark.parametrize(
     "email, name, password1, password2, valid",
     [
-        ("a", "danny", "jimmybob", "jimmybob", False)
+        ("a", "danny", "jimmybob", "jimmybob", False),
+        ("rthu@gmail.com", "arty", "passwordd", "passwordd", True)
     ]
 
     
