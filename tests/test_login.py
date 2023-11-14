@@ -1,11 +1,7 @@
-
-
 import pytest
 from website.models import User, Project
 from marshmallow import ValidationError
 import datetime
-
-
 
 
 @pytest.mark.parametrize("email, password",[
