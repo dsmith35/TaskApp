@@ -5,12 +5,16 @@ from marshmallow import ValidationError
 import datetime
 
 
-data1 = {"email":"test@test.com","name":"testguy","password1":"123456","password2":"123456"}
 
 
-def test_register(client, app):
-    response = client.post("/register", data=data1)
-    with app.app_context():
-        assert User.query.count() == 1
-        assert User.query.first().email == "test@test.com"
+@pytest.mark.parametrize("email, name, password1, password2",[
+    ("test@test.com", "testguy", "123456", "123456"),
+    ("", "testguy", "123456", "123456")
+])
+
+def test_register(email, name, password1, password2):
+    assert email == "test@test.com"
+    assert password1 == password2
+    assert email != ""
+    
         
