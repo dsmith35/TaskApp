@@ -31,7 +31,3 @@ def test_newproject(name, sdate, deadline, description):
     assert sdate != ""
     assert deadline != ""
 
-#def test_login(client, app):
- #   response = client.post("/login", data = cdata)
-  #  with app.app_context():
-   #     assert 
