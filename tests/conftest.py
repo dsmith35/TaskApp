@@ -21,11 +21,11 @@ def app():
 
 
 
-@pytest.fixture()
-def app_db(flask_app):
-    db.create_all()
+# @pytest.fixture()
+# def app_db(flask_app):
+#    db.create_all()
     
-    yield flask_app
+#    yield flask_app
     
 @pytest.fixture()
 def client(app):
