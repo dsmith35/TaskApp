@@ -8,44 +8,43 @@ from website.auth import register, User
 from website.auth import User
 from main import app
 
-@pytest.fixture(scope="session")
-def flask_app():
+@pytest.fixture()
+def app():
     app = create_app()
-    
-    client = app.test_client()
-    
-    ctx = app.test_request_context()
-    ctx.push()
 
-    yield client
-
-    ctx.pop()
+    with app.app_context():
+        db.create_all()
+    yield app
+    # code here gets run after pytest finishes running
+    ###
     
 
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app_db(flask_app):
     db.create_all()
     
     yield flask_app
     
-    db.session.commit()
-    db.drop_all
-    
-@pytest.fixture
-def app_data(app_db):
-    userx = register()
-    userx.email = "rthu@gmail.com"
-    userx.name = "arty"
-    userx.password = generate_password_hash("passwordd")
-    userx.password2 = generate_password_hash("passwordd")
+@pytest.fixture()
+def client(app):
+    return app.test_client()
 
-    db.session.add(userx)
+
+# @pytest.fixture
+# def app_data(app_db):
+#     userx = register()
+#     userx.email = "rthu@gmail.com"
+#     userx.name = "arty"
+#     userx.password = generate_password_hash("passwordd")
+#     userx.password2 = generate_password_hash("passwordd")
+
+#     db.session.add(userx)
     
-    db.session.commit()
+#     db.session.commit()
     
-    yield app_db
+#     yield app_db
     
-    db.session.execute(delete(User))
-    db.session.commit()
+#     db.session.execute(delete(User))
+#     db.session.commit()
