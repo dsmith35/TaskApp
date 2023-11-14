@@ -5,11 +5,14 @@ from flask_login import LoginManager
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
+TEST_DB_NAME="test-database.db"
 # initialize db
-def create_app():
+def create_app(testing=False):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'abcd'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    if testing: 
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{TEST_DB_NAME}'
     db.init_app(app)
 
     
