@@ -17,6 +17,8 @@ def register():
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already in database', category='error')
+        elif '@' not in email:
+            flash('Invalid email address', category='error')
         elif len(email) < 3:
             flash('Email must contain more than three characters', category ='error')
         elif len(name) < 2:
