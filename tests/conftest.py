@@ -10,6 +10,8 @@ def app():
     yield app
     # code here gets run after pytest finishes running
     ###
+    with app.app_context():
+        db.drop_all()
     
     
 @pytest.fixture()

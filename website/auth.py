@@ -111,7 +111,7 @@ def new_project():
     return render_template("newProject.html", user=current_user)
 
 
-@auth.route('/logout')
+@auth.route('/logout', methods=['GET'])
 @login_required
 def logout():
     logout_user()
