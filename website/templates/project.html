@@ -1,40 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Project: {{ project.name }}{% endblock %}
+{% block title %}Project Manager{% endblock %}
 
 {% block content %}
 
-<h3 align="center">Project Manager</h3>
-<div class="container">
-    <h1 align="center" id="project-name">{{ project.name }}</h1>
-    <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
-    <p align="center" id="project-description">{{ project.description }}</p>
+Project tasks and options should appear here.
 
-    <div align="center">
-        <!-- Button to navigate to the New Task page -->
-        <a class="nav-item nav-link" href="{{ url_for('auth.new_task', project_id=project.id) }}">
-            <button class="btn btn-primary">New Task</button>
-        </a>
-        <button type="button" class="btn btn-primary">Edit Project</button>
-        <button type="button" class="btn btn-danger">Delete Project</button>
-    </div>
+<form method="POST">
+    <label>Invite User</label>
+    <input
+          type="email"
+          id="new_user_email"
+          name="new_user_email"
+          placeholder="Enter email"
+        style="width: 250px;"><button type="submit">Send</button>
+</form>
 
-    <div class="tasks-container">
-        {% for task in project.tasks %}
-            <div class="task-box">
-                <h4>{{ task.name }}</h4>
-                <p>Start Date: {{ task.start_date.strftime('%Y-%m-%d') }} ----> End Date: {{ task.deadline.strftime('%Y-%m-%d') }}</p>
-                <p>{{ task.description or "No description available" }}</p>
-                <div align="left">
-                    <button type="button" class="btn btn-success btn-sm">Complete Task</button>
-                    <button type="button" class="btn btn-primary btn-sm">Edit Task</button>
-                    <button type="button" class="btn btn-danger btn-sm">Delete Task</button>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+<a class="nav-item nav-link" id="task_manager" href="{{ url_for('auth.new_task', project_id=project.id) }}">
+  <button class="btn btn-primary">New Task</button>
+</a>
 
-</div>
+<ul style="list-style-type: none">
+  {% for tsk in tasks %}
+      <li> <div data-name="{{ tsk.name }}" data-info="{{ tsk.description }}" data-id="{{ tsk.id }}">
+        <input type="checkbox">
+        {{ tsk.description }} 
+        <span style="color: gray; font-size: small;">({{ tsk.assignee }})</span>
+      </div></li>
+  {% endfor %}
+</ul>
+
+
 
 {% endblock %}
