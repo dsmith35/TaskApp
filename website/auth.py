@@ -78,16 +78,17 @@ def new_project():
         name = request.form.get('name')
         start_date = request.form.get('sdate')
         use_deadline = request.form.get('use-deadline')
-        deadline = request.form.get('deadline') if use_deadline else None
+        deadline = request.form.get('deadline')
         description = request.form.get('description')
 
         if not name:
             flash('Project name is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif deadline:
-            if start_date >= deadline:
-                flash('Start date must be before the deadline', category='error')
+        elif use_deadline and not deadline:
+            flash('No deadline given', category='error')
+        elif use_deadline and start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')   
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
@@ -99,13 +100,12 @@ def new_project():
                 deadline=deadline,
                 description=description,
                 users=[current_user],  # Assuming you use Flask-Login to get the current user
-                tasks=[]  # You can set task_id as needed
+                tasks=[] 
             )
 
             db.session.add(new_project)
             db.session.commit()
-
-            flash(f'New Project "{name}" created successfully', category='success')
+            flash(f"New Project [{name}] created successfully", category='success')
             return redirect(url_for('auth.projectManager'))
 
     return render_template("newProject.html", user=current_user)
@@ -176,20 +176,20 @@ def new_task(project_id):
         description = request.form.get('description')
         start_date = request.form.get('start_date')
         use_deadline = request.form.get('use-deadline')
-        deadline = request.form.get('deadline') if use_deadline else None
+        deadline = request.form.get('deadline')
 
         if not description:
             flash('Task description is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif deadline:
-            if start_date >= deadline:
-                flash('Start date must be before the deadline', category='error')
+        elif use_deadline and not deadline:
+            flash('No deadline given', category='error')
+        elif use_deadline and start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
             deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
-
             new_task = Task(
                 assignee=assignee,
                 description=description,

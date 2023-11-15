@@ -1,5 +1,5 @@
 def test_logout_1(client, app):
-    # Successful registration
+    # Successful logout
     client.post("/register", 
                 data={"email": "test@test.com", "name":"test", "password1": "testpassword","password2": "testpassword"},
                 follow_redirects=True)
