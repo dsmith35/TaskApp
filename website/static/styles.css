@@ -54,7 +54,6 @@
     border: 1px solid rgb(103, 166, 118) !important;
     padding: 10px;
     margin-bottom: 10px;
-    /* Add any other styles you'd like for completed tasks */
 }
 
 .project-completed {
@@ -63,7 +62,6 @@
     border: 1px solid #4bb543 !important;
     padding: 10px;
     margin-bottom: 10px;
-    /* Add any other styles you'd like for completed tasks */
 }
 
 canvas#confetti-canvas {
