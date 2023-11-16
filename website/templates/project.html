@@ -43,7 +43,7 @@
                 {{ task.deadline.strftime('%Y-%m-%d') }}
                 {% endif %}
               </span>
-              <span class="task-assignee">({{ task.assignee }})</span>
+              <span class="task-assignee">{% if task.assignee %}{{task.assignee}}{% endif %}</span>
               <p class="task-description">{{ task.description or "No description available" }}</p>
               <div class="task-actions">
                 <form action="{{ url_for('auth.complete_task', project_id=project.id, task_id=task.id) }}" method="post" style="display: inline;">
