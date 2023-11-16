@@ -110,7 +110,7 @@ def new_project():
             db.session.add(new_project)
             db.session.commit()
             flash(f"New Project [{name}] created successfully", category='success')
-            return redirect(url_for('auth.projectManager'))
+            return redirect(url_for('auth.project', project_id=new_project.id))
 
     return render_template("newProject.html", user=current_user)
 
