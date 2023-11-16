@@ -249,6 +249,20 @@ def complete_task(project_id, task_id):
     db.session.commit()
     return redirect(url_for('auth.project', project_id=project_id))
 
+@auth.route('/complete_project/<project_id>', methods=['POST'])
+def complete_project(project_id):
+    project = Project.query.filter(Project.id == project_id).first()
+    tasks = project.tasks
+    project_completed = False
+    if tasks:
+        project_completed = True
+        for task in tasks:
+            if not task.completed:
+                project_completed = False
+    project.completed = project_completed
+    db.session.commit()
+    return redirect(url_for('auth.project', project_id=project_id, project_completed=project_completed))
+
 @auth.route('/database')
 def view_users():
     users = User.query.all()

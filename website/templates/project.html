@@ -32,7 +32,6 @@
           <button type="submit" class="btn btn-danger">Delete Project</button>
         </form>
     </div>
-    
     <div class="tasks-container">
       {% for task in project.tasks %}
           <div class="task-box {% if task.completed %}task-completed{% endif %}">
@@ -60,6 +59,14 @@
   </div>
 
 </div>
+
+<script>
+  // update project completion
+  fetch("{{ url_for('auth.complete_project', project_id=project.id) }}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',}
+    })
+</script>
 
 {% endblock %}
 

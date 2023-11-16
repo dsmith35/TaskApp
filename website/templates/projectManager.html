@@ -35,10 +35,11 @@
     <ul style="list-style-type: none">
         {% for prj in projects %}
         <li>
-            <button type="button" class="btn btn-primary btn-lg project-button"
+            <button type="button" class="btn btn-primary btn-lg project-button {% if prj.completed %}project-completed{% endif %}"
                     data-name="{{ prj.name }}"
                     data-info="{{ prj.description }}"
-                    data-id="{{ prj.id }}">
+                    data-id="{{ prj.id }}"
+                    data-completed="{{ prj.completed }}">
                 {{ prj.name }}
             </button>
         </li>
@@ -59,6 +60,9 @@
             button.addEventListener("click", function () {
                 projectName.innerHTML = `<h1>${this.getAttribute("data-name")}</h1>`;
                 projectInfo.innerHTML = `<p>${this.getAttribute("data-info")}</p>`;
+                if (this.getAttribute("data-completed") == "True") {
+                    projectInfo.innerHTML += `<p style="color:#4bb543">Completed</p>`;
+                }
                 projectInfo.setAttribute("data-id", this.getAttribute("data-id"));
                 option_buttons.style = "display: block;";
                 option_buttons.insertBefore(open_prj_btn, option_buttons.firstChild);

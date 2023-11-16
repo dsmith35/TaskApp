@@ -12,7 +12,7 @@
     <ul>
         {% for prj in projects %}
             <li>ID: {{ prj.id }}, Name: {{ prj.name }}, Info: {{ prj.description }}, Deadline: {{prj.deadline}} Users: {{prj.users}} 
-                Tasks: {{prj.tasks}} isDefault: {{prj.is_default}} 
+                Tasks: {{prj.tasks}} isDefault: {{prj.is_default}} Completed: {{prj.completed}}
             </li>
         {% endfor %}
     </ul>

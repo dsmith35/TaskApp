@@ -44,5 +44,13 @@
 
 </div>
 
+<script>
+    // update project completion
+    fetch("{{ url_for('auth.complete_project', project_id=project.id) }}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',}
+    })
+</script>
+
 {% endblock %}
 
