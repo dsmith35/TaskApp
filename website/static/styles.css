@@ -47,3 +47,22 @@
     color: grey;
     font-size: small;
 }
+
+.task-completed {
+    background-color: rgb(137, 222, 157);
+    color: rgb(21, 87, 36);
+    border: 1px solid rgb(103, 166, 118);
+    padding: 10px;
+    margin-bottom: 10px;
+    /* Add any other styles you'd like for completed tasks */
+}
+
+canvas#confetti-canvas {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    pointer-events: none;
+  }

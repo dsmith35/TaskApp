@@ -2,7 +2,7 @@
 {% block title %} Userbase {% endblock %}
 
 {% block content%}
-    <h1>Users</h1>
+    <h2>Users</h2>
     <ul>
         {% for u in users %}
             <li>{{ u.name }} (Id: {{ u.id }}) (Email: {{ u.email }}), Projects: {{u.projects}}</li>
@@ -20,7 +20,7 @@
     <ul>
         {% for tsk in tasks %}
             <li>ID: {{ tsk.id }}, Info: {{ tsk.description }} Asignee: {{tsk.assignee}}, 
-                Deadline: {{tsk.deadline}} Project: {{tsk.project}} 
+                Deadline: {{tsk.deadline}} Project: {{tsk.project}} Completed: {{tsk.completed}}
             </li>
         {% endfor %}
     </ul>

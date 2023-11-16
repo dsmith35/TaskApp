@@ -13,13 +13,23 @@
 <h3 align="center">Project Manager</h3>
 <div class="container">
     <hr>
-    <h1 align="center" id="project-name"> Select a Project: </h1>
+    {% if not projects %}
+        <h1 align="center"> You have no Projects</h1>
+    {% else %}
+        <h1 align="center"> Select a Project: </h1>
+    {% endif %}
+    <a align="center" class="nav-item nav-link" href="{{ url_for('auth.new_project') }}">
+        <button type="button" class="btn btn-primary btn-sm">New Project</button>
+    </a>
+    <h1 align="center" id="project-name"></h1>
     <p align="center" id="project-info">  </p>
     <div align="center" id="option-buttons" style="display: none;">
         <button id="open_prj_btn" type="button" class="btn btn-primary">Open Project</button>
         <button type="button" class="btn btn-secondary">Project Complete</button>
         <button type="button" class="btn btn-secondary">Set Priority</button>
-        <button type="button" class="btn btn-secondary btn-danger">Delete Project</button>
+        <form id="delete-form" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
         <br>
     </div>
     <ul style="list-style-type: none">
@@ -49,12 +59,32 @@
             button.addEventListener("click", function () {
                 projectName.innerHTML = `<h1>${this.getAttribute("data-name")}</h1>`;
                 projectInfo.innerHTML = `<p>${this.getAttribute("data-info")}</p>`;
+                projectInfo.setAttribute("data-id", this.getAttribute("data-id"));
                 option_buttons.style = "display: block;";
                 option_buttons.insertBefore(open_prj_btn, option_buttons.firstChild);
                 open_prj_btn.onclick = () => { window.location.href = `project/${this.getAttribute("data-id")}`; }
             });
         });
     });
+
+    function get_selected_project_id() {
+        project_id = document.getElementById("project-info").getAttribute("data-id");
+        return project_id
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteForm = document.getElementById("delete-form");
+        if (deleteForm) {
+            deleteForm.addEventListener("submit", function (event) {
+                const selectedProjectId = get_selected_project_id();
+                deleteForm.action = `/delete_project/${selectedProjectId}`;
+            });
+        }
+    });
+
+    function get_selected_project_id() {
+        return document.getElementById("project-info").getAttribute("data-id");
+    }
 </script>
 
 </html>
