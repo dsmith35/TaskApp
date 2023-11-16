@@ -1,0 +1,49 @@
+.btn-xsm {
+    display: inline-block;
+    width: 70px;
+    height: 20px;
+    padding: 0px 0px !important;
+    font-size: 12px !important;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.tasks-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-box {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    width: 100%;
+    margin-bottom: 0px;
+    box-sizing: border-box;
+}
+
+.task-box h4 {
+    margin-bottom: 0px;
+}
+
+.task-dates {
+    font-style: italic;
+    margin-bottom: 3px;
+    color: navy;
+    font-size: smaller;
+}
+
+.task-description {
+    margin-bottom: 10px;
+}
+
+.task-actions {
+    display: flex;
+}
+
+.task-assignee {
+    color: grey;
+    font-size: small;
+}
