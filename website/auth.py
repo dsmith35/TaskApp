@@ -158,6 +158,7 @@ def project(project_id):
             flash("User not found", category='error')
     
     tasks.sort(key=lambda t: (not t.completed, t.id)) # sort tasks by 1: completion, 2: id
+    print(tasks)
     # get progress percentage
     total_tasks = len(tasks)
     completed_tasks = sum(1 for task in tasks if task.completed)

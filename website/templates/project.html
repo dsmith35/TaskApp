@@ -33,7 +33,7 @@
         </form>
     </div>
     <div class="tasks-container">
-      {% for task in project.tasks %}
+      {% for task in tasks %}
           <div class="task-box {% if task.completed %}task-completed{% endif %}">
               <h4>{{ task.name }}</h4>
               <span class="task-dates">{{ task.start_date.strftime('%Y-%m-%d') }} &mdash;
