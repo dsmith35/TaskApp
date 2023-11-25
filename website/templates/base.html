@@ -4,6 +4,7 @@
         <!-- Formatting + bootstrap styles used for front end -->
         <meta charset = "utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="../static/styles.css"/>
         <link
             rel="stylesheet"
             href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -15,6 +16,7 @@
             href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
             crossorigin="anonymous"
         />
+        <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
         <title>{% block title %} Homepage {% endblock %}</title>
     </head>
 
@@ -54,15 +56,22 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-            {% if category != 'error' %}
-            <div class="alert alert-success alter-dismissable fade show"  role = "alert">
+            {% if category == 'error' %}
+            <div class="alert alert-danger alter-dismissable fade show"  role = "alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% elif category == 'warning' %}
+            <div class="alert alert-warning alter-dismissable fade show"  role = "alert">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             {% else %}
-            <div class="alert alert-danger alter-dismissable fade show"  role = "alert">
+            <div class="alert alert-success alter-dismissable fade show"  role = "alert">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert">
                     <span aria-hidden="true">&times;</span>
@@ -91,6 +100,29 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"
         ></script>
+
+        <!-- confetti and progress bars-->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const canvas = document.getElementById('confetti-canvas');
+                const jsConfetti = new JSConfetti();
+
+                const progressBar = document.getElementById('progress-bar');
+
+                // Check the progress when the page loads
+                checkProgress();
+
+                function checkProgress() {
+                    if (progressBar) {
+                        const progressPercentage = parseInt(progressBar.style.width, 10);
+                        if (progressPercentage === 100) {
+                            // Trigger confetti when progress is 100%
+                            jsConfetti.addConfetti();
+                        }
+                    }
+                }
+            })
+        </script>
     </body>
 
 </html>

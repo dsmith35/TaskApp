@@ -1,0 +1,73 @@
+.btn-xsm {
+    display: inline-block;
+    width: 70px;
+    height: 20px;
+    padding: 0px 0px !important;
+    font-size: 12px !important;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.tasks-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-box {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    width: 100%;
+    margin-bottom: 0px;
+    box-sizing: border-box;
+}
+
+.task-box h4 {
+    margin-bottom: 0px;
+}
+
+.task-dates {
+    font-style: italic;
+    margin-bottom: 3px;
+    color: navy;
+    font-size: smaller;
+}
+
+.task-description {
+    margin-bottom: 10px;
+}
+
+.task-actions {
+    display: flex;
+}
+
+.task-assignee {
+    color: grey;
+    font-size: small;
+}
+
+.task-completed {
+    background-color: rgb(137, 222, 157) !important;
+    color: rgb(21, 87, 36) !important;
+    border: 1px solid rgb(103, 166, 118) !important;
+    padding: 10px;
+}
+
+.project-completed {
+    background-color: #4bb543 !important;
+    color: #ffffff !important;
+    border: 1px solid #4bb543 !important;
+    padding: 10px;
+}
+
+canvas#confetti-canvas {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    pointer-events: none;
+  }

@@ -1,34 +1,72 @@
 {% extends "base.html" %}
-{% block title %}Project Manager{% endblock %}
+{% block title %}Project: {{ project.name }}{% endblock %}
 
 {% block content %}
 
-Project tasks and options should appear here.
+<h3 align="center">Project Manager</h3>
+<canvas id="confetti-canvas"></canvas>
+<div class="container">
+    <h1 align="center" id="project-name">{{ project.name }}</h1>
+    <div class="progress">
+        <div id="progress-bar" class="progress-bar {% if progress_percentage == 100 %}bg-success{% endif %}" role="progressbar" 
+        style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p align="center" id="project-description">{{ project.description }}</p>
 
-<form method="POST">
-    <label>Invite User</label>
-    <input
-          type="email"
-          id="new_user_email"
-          name="new_user_email"
-          placeholder="Enter email"
-        style="width: 250px;"><button type="submit">Send</button>
-</form>
+    <form method="POST">
+      <label>Invite User</label>
+      <input
+            type="email"
+            id="new_user_email"
+            name="new_user_email"
+            placeholder="Enter email"
+          style="width: 250px;"><button type="submit">Send</button>
+    </form>
 
-<a class="nav-item nav-link" id="task_manager" href="{{ url_for('auth.new_task', project_id=project.id) }}">
-  <button class="btn btn-primary">New Task</button>
-</a>
+    <div align="center">
+        <a class="nav-item nav-link" href="{{ url_for('auth.new_task', project_id=project.id) }}">
+            <button class="btn btn-primary">New Task</button>
+        </a>
+        <button type="button" class="btn btn-primary">Edit Project</button>
+        <form action="{{ url_for('auth.delete_project', project_id=project.id) }}" method="post" style="display: inline;">
+          <button type="submit" class="btn btn-danger">Delete Project</button>
+        </form>
+    </div>
+    <div class="tasks-container">
+      {% for task in tasks %}
+          <div class="task-box {% if task.completed %}task-completed{% endif %}">
+              <h4>{{ task.name }}</h4>
+              <span class="task-dates">{{ task.start_date.strftime('%Y-%m-%d') }} &mdash;
+                {% if task.deadline.strftime('%Y-%m-%d') == '9999-12-31' %}
+                No Deadline
+                {% else %}
+                {{ task.deadline.strftime('%Y-%m-%d') }}
+                {% endif %}
+              </span>
+              <span class="task-assignee">{% if task.assignee %}{{task.assignee}}{% endif %}</span>
+              <p class="task-description">{{ task.description or "No description available" }}</p>
+              <div class="task-actions">
+                <form action="{{ url_for('auth.complete_task', project_id=project.id, task_id=task.id) }}" method="post" style="display: inline;">
+                  <button type="submit" class="btn btn-success btn-xsm">Complete</button>
+                </form>
+                  <button type="button" class="btn btn-primary btn-xsm">Edit</button>
+                  <form action="{{ url_for('auth.delete_task', project_id=project.id, task_id=task.id) }}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-xsm">Delete</button>
+                </form>
+              </div>
+          </div>
+      {% endfor %}
+  </div>
 
-<ul style="list-style-type: none">
-  {% for tsk in tasks %}
-      <li> <div data-name="{{ tsk.name }}" data-info="{{ tsk.description }}" data-id="{{ tsk.id }}">
-        <input type="checkbox">
-        {{ tsk.description }} 
-        <span style="color: gray; font-size: small;">({{ tsk.assignee }})</span>
-      </div></li>
-  {% endfor %}
-</ul>
+</div>
 
-
+<script>
+  // update project completion
+  fetch("{{ url_for('auth.complete_project', project_id=project.id) }}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',}
+    })
+</script>
 
 {% endblock %}
+

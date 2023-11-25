@@ -1,22 +1,46 @@
+def test_newtask_1(client, app):
+    # Successfully created new task
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/tasks/newtask", 
+                data={"assignee": "John", "description":"get groceries", "start_date": "2023-11-01","use-deadline":"True","deadline": "2023-11-11"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b'New task created successfully' in response.data
 
-import pytest
-from website.models import User, Project
-from marshmallow import ValidationError
-import datetime
+def test_newtask_2(client, app):
+    # No start date
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/tasks/newtask", 
+                data={"assignee": "John", "description":"get groceries","use-deadline":"True","deadline": "2023-11-11"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b'Start date is required' in response.data
+
+def test_newtask_3(client, app):
+    # Start date after deadline error
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/tasks/newtask", 
+                data={"assignee": "John", "description":"get groceries", "start_date": "2100-11-14","use-deadline":"True","deadline": "2001-11-14"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b'Start date must be before the deadline' in response.data
+
+def test_newtask_4(client, app):
+    # Deadline not given (only if use-deadline box is checked)
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/tasks/newtask", 
+                data={"assignee": "John", "description":"get groceries", "start_date": "2000-10-14","use-deadline":"True"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b'No deadline given' in response.data
 
 
 
-
-@pytest.mark.parametrize("assignee, sdate, deadline, description",[
-    ("Johnn", "2023-11-20", "2023-12-20", "327Asssignment" ),
-    ("Johnn", "2023-12-20", "2023-11-20", "327Asssignment" ),
-    ("Johnn", "", "2023-11-20", "327Asssignment" ),
-    ("Johnn", "2023-12-20", "", "327Asssignment" )
-])
-
-def test_newtask(assignee, sdate, deadline, description):
-    assert assignee == "Johnn"
-    assert description == "327Asssignment"
-    assert sdate < deadline
-    assert sdate != ""
-    assert deadline != ""

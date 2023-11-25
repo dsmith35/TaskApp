@@ -1,33 +1,43 @@
-import pytest
-from website.models import User, Project
-from marshmallow import ValidationError
-import datetime
+def test_project_1(client, app):
+    # Successfully created new project
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/newproject", 
+                data={"name":"TestProject", "description":"a test project", "sdate": "2023-11-01","use-deadline":"True","deadline": "2023-11-11"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b"New Project [TestProject] created successfully" in response.data
 
-# start_date = datetime.datetime.strptime("2023-11-20 01-01-01", "%Y-%m-%d %H-%m-%s")
-# deadline = datetime.datetime.strptime("2023-12-20 01-01-01", "%Y-%m-%d %H-%m-%s")
+def test_project_2(client, app):
+    # No start date
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/newproject", 
+                data={"name":"TestProject", "description":"a test project","use-deadline":"True","deadline": "2023-11-11"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b"Start date is required" in response.data
 
-bdata = {"name": "Johnn", "sdate": "2023-11-20", "deadline": "2023-12-20", "description": "327FinalAsssignment" }
+def test_project_3(client, app):
+    # Start date after deadline error
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/newproject", 
+                data={"name":"TestProject", "description":"a test project","sdate": "2100-11-14","use-deadline":"True","deadline": "2001-11-14"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b"Start date must be before the deadline" in response.data
 
-@pytest.mark.parametrize("name, sdate, deadline, description",[
-    ("Johnn", "2023-11-20", "2023-12-20", "327FinalAsssignment" ),
-    ("Johnn", "2023-12-20", "2023-11-20", "327FinalAsssignment" ),
-    ("Johnn", "", "2023-11-20", "327FinalAsssignment" ),
-    ("Johnn", "2023-12-20", "", "327FinalAsssignment" )
-    
-    
-])
-#def test_newproject(client, app):
-#    response = client.post("/newproject", data = bdata)
-#    with app.app_context():
-#        assert bdata["name"] == "Johnn"
-#        assert bdata["description"] == "327FinalAsssignment"
-#        assert bdata["sdate"] < bdata["deadline"]
-#        assert bdata["sdate"] != ""
-#        assert bdata["deadline"] != ""      
-def test_newproject(name, sdate, deadline, description):
-    assert name == "Johnn"
-    assert description == "327FinalAsssignment"
-    assert sdate < deadline
-    assert sdate != ""
-    assert deadline != ""
-
+def test_project_4(client, app):
+    # Deadline not given (only if use-deadline box is checked)
+    client.post("/register", 
+                data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/newproject", 
+                data={"name":"TestProject", "description":"a test project","sdate": "2000-10-14","use-deadline":"True"},
+                follow_redirects=True)
+    with app.app_context():
+        assert b"No deadline given" in response.data

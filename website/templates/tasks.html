@@ -1,21 +1,56 @@
 {% extends "base.html" %}
-{% block title %} Home {% endblock %}
+{% block title %}Project: {{ project.name }}{% endblock %}
 
-{% block content%}
-<h1 align="center"> Tasks </h1>
-<a class="nav-item nav-link" id="task_manager" href="{{ url_for('auth.new_task', project_id=project.id) }}">
-  <button class="btn btn-primary">New Task</button>
-</a>
+{% block content %}
 
-<ul style="list-style-type: none">
-    {% for tsk in tasks %}
-        <li> <div data-id="{{ tsk.id }}">
-            <div>
-                <input type="checkbox">
-                {{ tsk.description }}
+
+<h3 align="center">My Tasks</h3>
+<canvas id="confetti-canvas"></canvas>
+<div class="container">
+    <div class="progress">
+        <div id="progress-bar" class="progress-bar {% if progress_percentage == 100 %}bg-success{% endif %}" role="progressbar" 
+        style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div align="center">
+        <a class="nav-item nav-link" href="{{ url_for('auth.new_task', project_id=project.id) }}">
+            <button class="btn btn-primary">New Task</button>
+        </a>
+    </div>
+    
+    <div class="tasks-container">
+        {% for task in tasks %}
+            <div class="task-box {% if task.completed %}task-completed{% endif %}">
+                <h4>{{ task.name }}</h4>
+                <p class="task-dates">{{ task.start_date.strftime('%Y-%m-%d') }} &mdash;
+                    {% if task.deadline.strftime('%Y-%m-%d') == '9999-12-31' %}
+                    No Deadline
+                    {% else %}
+                    {{ task.deadline.strftime('%Y-%m-%d') }}
+                    {% endif %}
+                </p>
+                <p class="task-description">{{ task.description or "No description available" }}</p>
+                <div class="task-actions">
+                    <form action="{{ url_for('auth.complete_task', project_id=project.id, task_id=task.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success btn-xsm">Complete</button>
+                    </form>
+                    <button type="button" class="btn btn-primary btn-xsm">Edit</button>
+                    <form action="{{ url_for('auth.delete_task', project_id=project.id, task_id=task.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-xsm">Delete</button>
+                    </form>
+                </div>
             </div>
-        </div></li>
-    {% endfor %}
-</ul>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+    // update project completion
+    fetch("{{ url_for('auth.complete_project', project_id=project.id) }}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',}
+    })
+</script>
 
 {% endblock %}
+

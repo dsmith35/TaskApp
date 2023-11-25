@@ -65,31 +65,36 @@ def login():
     return render_template("login.html", user=current_user)
 
 @auth.route('/taskmanager')
+@login_required
 def taskManager():
     return render_template("taskManager.html", user=current_user)
 
 @auth.route('/projectmanager')
+@login_required
 def projectManager():
     projects = Project.query.filter(Project.users.any(id=current_user.id), ~Project.is_default).all()
     # projects = Project.query.all()
+    print(projects)
     return render_template("projectManager.html", user=current_user, projects=projects)
 
 @auth.route('/newproject', methods=['GET', 'POST'])
+@login_required
 def new_project():
     if request.method == 'POST':
         name = request.form.get('name')
         start_date = request.form.get('sdate')
         use_deadline = request.form.get('use-deadline')
-        deadline = request.form.get('deadline') if use_deadline else None
+        deadline = request.form.get('deadline')
         description = request.form.get('description')
 
         if not name:
             flash('Project name is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif deadline:
-            if start_date >= deadline:
-                flash('Start date must be before the deadline', category='error')
+        elif use_deadline and not deadline:
+            flash('No deadline given', category='error')
+        elif use_deadline and start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')   
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
@@ -101,14 +106,13 @@ def new_project():
                 deadline=deadline,
                 description=description,
                 users=[current_user],  # Assuming you use Flask-Login to get the current user
-                tasks=[]  # You can set task_id as needed
+                tasks=[] 
             )
 
             db.session.add(new_project)
             db.session.commit()
-
-            flash(f'New Project "{name}" created successfully', category='success')
-            return redirect(url_for('auth.projectManager'))
+            flash(f"New Project [{name}] created successfully", category='success')
+            return redirect(url_for('auth.project', project_id=new_project.id))
 
     return render_template("newProject.html", user=current_user)
 
@@ -121,6 +125,7 @@ def logout():
     return redirect(url_for('auth.login'))
 
 @auth.route('/project/<project_id>', methods=['GET', 'POST'])
+@login_required
 def project(project_id):
 
     # see if project is default project
@@ -154,11 +159,17 @@ def project(project_id):
         else:
             flash("User not found", category='error')
     
-    # return page
-    return render_template('project.html', user=current_user, project=project, tasks=tasks)
+    tasks.sort(key=lambda t: (not t.completed, t.id)) # sort tasks by 1: completion, 2: id
+    print(tasks)
+    # get progress percentage
+    total_tasks = len(tasks)
+    completed_tasks = sum(1 for task in tasks if task.completed)
+    progress_percentage = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+    return render_template('project.html', user=current_user, project=project, tasks=tasks, progress_percentage=progress_percentage)
     
 @auth.route('project/<project_id>/newtask', methods=['GET', 'POST'])
 @auth.route('/tasks/newtask', methods=['GET', 'POST'], defaults={'project_id': None})
+@login_required
 def new_task(project_id):
 
     def_project = get_default_project()
@@ -178,20 +189,20 @@ def new_task(project_id):
         description = request.form.get('description')
         start_date = request.form.get('start_date')
         use_deadline = request.form.get('use-deadline')
-        deadline = request.form.get('deadline') if use_deadline else None
+        deadline = request.form.get('deadline')
 
         if not description:
             flash('Task description is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif deadline:
-            if start_date >= deadline:
-                flash('Start date must be before the deadline', category='error')
+        elif use_deadline and not deadline:
+            flash('No deadline given', category='error')
+        elif use_deadline and start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
             deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
-
             new_task = Task(
                 assignee=assignee,
                 description=description,
@@ -208,17 +219,59 @@ def new_task(project_id):
     return render_template('newTask.html', user=current_user, project=project)
 
 @auth.route('/tasks')
+@login_required
 def tasks():
     def_project = get_default_project()
     tasks = def_project.tasks
-    return render_template('tasks.html', user=current_user, project=def_project, tasks=tasks)
+    tasks.sort(key=lambda t: (not t.completed, t.id)) # sort tasks by 1: completion, 2: id
+    # get progress percentage
+    total_tasks = len(tasks)
+    completed_tasks = sum(1 for task in tasks if task.completed)
+    progress_percentage = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+    return render_template('tasks.html', user=current_user, project=def_project, tasks=tasks, progress_percentage=progress_percentage)
 
-@auth.route('/view_users')
+@auth.route('/delete_task/<project_id>/<task_id>', methods=['POST'])
+def delete_task(project_id, task_id):
+    task = Task.query.filter(Task.id == task_id).first()
+    db.session.delete(task)
+    db.session.commit()
+    return redirect(url_for('auth.project', project_id=project_id))
+
+@auth.route('/delete_project/<project_id>', methods=['POST'])
+def delete_project(project_id):
+    project = Project.query.filter(Project.id == project_id).first()
+    db.session.delete(project)
+    db.session.commit()
+    flash(f'Project [{project.name}] was deleted', category='warning')
+    return redirect(url_for('auth.projectManager'))
+
+@auth.route('/complete_task/<project_id>/<task_id>', methods=['POST'])
+def complete_task(project_id, task_id):
+    task = Task.query.filter(Task.id == task_id).first()
+    task.completed = True if not task.completed else False
+    db.session.commit()
+    return redirect(url_for('auth.project', project_id=project_id))
+
+@auth.route('/complete_project/<project_id>', methods=['POST'])
+def complete_project(project_id):
+    project = Project.query.filter(Project.id == project_id).first()
+    tasks = project.tasks
+    project_completed = False
+    if tasks:
+        project_completed = True
+        for task in tasks:
+            if not task.completed:
+                project_completed = False
+    project.completed = project_completed
+    db.session.commit()
+    return redirect(url_for('auth.project', project_id=project_id, project_completed=project_completed))
+
+@auth.route('/database')
 def view_users():
     users = User.query.all()
     projects = Project.query.all()
     tasks  = Task.query.all()
-    return render_template('view_users.html', user=current_user, users=users, projects=projects, tasks=tasks)
+    return render_template('database.html', user=current_user, users=users, projects=projects, tasks=tasks)
 
 
 
