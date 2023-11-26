@@ -40,9 +40,9 @@ def register():
             print("Logged in!")
             flash('Success! Your account has been created', category='success')
             return redirect(url_for('views.home'))
-            
-            
     return render_template("register.html", user=current_user)
+
+
 # checks everything is good before allowing user to login
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
