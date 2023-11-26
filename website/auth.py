@@ -19,9 +19,9 @@ def register():
             flash('Email already in database', category='error')
         elif '@' not in email:
             flash('Invalid email address', category='error')
-        elif len(email) < 3:
+        elif len(email) <= 3:
             flash('Email must contain more than three characters', category ='error')
-        elif len(name) < 2:
+        elif len(name) <= 2:
             flash('Name must contain more than two characters', category ='error')
         elif password1 != password2:
             flash('Passwords do not match', category ='error')
