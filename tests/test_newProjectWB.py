@@ -23,8 +23,20 @@ def test_project_2(client, app):
     with app.app_context():
         assert b"Project name is required" in response.data
 
-
 def test_project_3(client, app):
+    # GET request, no input data, shouldn't cause issues
+    # Covers T2
+    client.get("/register",
+                data={"email": "abc@def.com", "name": "John", "password1": "123456", "password2": "123456"},
+                follow_redirects=True)
+    response = client.post("/newproject",
+                           data={},
+                           follow_redirects=True)
+    with app.app_context():
+        assert response.status_code == 200
+
+
+def test_project_4(client, app):
     # No start date
     # Covers T4 and T5
     client.post("/register",
@@ -37,7 +49,7 @@ def test_project_3(client, app):
         assert b"Start date is required" in response.data
 
 
-def test_project_4(client, app):
+def test_project_5(client, app):
     # Deadline not given (only if use-deadline box is checked)
     # Covers T6 and T7
     client.post("/register",
@@ -50,7 +62,7 @@ def test_project_4(client, app):
         assert b"No deadline given" in response.data
 
 
-def test_project_5(client, app):
+def test_project_6(client, app):
     # Start date after deadline error
     # Covers T8 and T9
     client.post("/register",
