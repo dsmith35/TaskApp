@@ -1,4 +1,4 @@
-def test_project_2(client, app):
+def test_project_1(client, app):
     # No project name provided
     # Covers T1
     client.post("/register",
@@ -10,7 +10,7 @@ def test_project_2(client, app):
     with app.app_context():
         assert b"Project name is required" in response.data
 
-def test_project_3(client, app):
+def test_project_2(client, app):
     # GET request, no input data, shouldn't cause issues
     # Covers T2
     client.get("/register",
@@ -22,7 +22,7 @@ def test_project_3(client, app):
     with app.app_context():
         assert response.status_code == 200
 
-def test_project_4(client, app):
+def test_project_3(client, app):
     # No start date
     # Covers T3
     client.post("/register",
@@ -34,7 +34,7 @@ def test_project_4(client, app):
     with app.app_context():
         assert b"Start date is required" in response.data
 
-def test_project_5(client, app):
+def test_project_4(client, app):
     # Deadline not given (only if use-deadline box is checked)
     # Covers T4
     client.post("/register",
@@ -47,7 +47,7 @@ def test_project_5(client, app):
         assert b"No deadline given" in response.data
 
 
-def test_project_1(client, app):
+def test_project_5(client, app):
     # Successfully created new project
     # Covers T5
     client.post("/register",
