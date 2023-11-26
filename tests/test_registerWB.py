@@ -25,7 +25,7 @@ def test_register_3(client, app):
         
 def test_register_4(client, app):
     # less than 3 char in email
-    # T5
+    # T5 fail
     response = client.post("/register", 
                 data={"email": "a@b", "name":"John", "password1": "123456","password2": "123456"},
                 follow_redirects=True)
@@ -34,7 +34,7 @@ def test_register_4(client, app):
 
 def test_register_5(client, app):
     # name cannot be less than 3 char
-    # T6
+    # T6 fail
     response = client.post("/register", 
                 data={"email": "abc@def.com", "name":"xy", "password1": "123456","password2": "123456"},
                 follow_redirects=True)
@@ -47,8 +47,9 @@ def test_register_6(client, app):
     response = client.post("/register", 
                 data={"email": "abc@def.com", "name":"John", "password1": "123456","password2": "triangle"},
                 follow_redirects=True)
+                
     with app.app_context():
-        assert b'Name must contain more than two characters' in response.data  
+        assert b'Passwords do not match' in response.data  
         
 def test_register_7(client, app):
     # password must contain more than 6 chars
@@ -57,7 +58,7 @@ def test_register_7(client, app):
                 data={"email": "abc@def.com", "name":"John", "password1": "12345","password2": "12345"},
                 follow_redirects=True)
     with app.app_context():
-        assert b'Name must contain more than two characters' in response.data  
+        assert b'Password must contain more than six characters' in response.data  
         
 def test_register_8(client, app):
     # Successful registration
@@ -67,3 +68,4 @@ def test_register_8(client, app):
                 follow_redirects=True)
     with app.app_context():
         assert b'Success! Your account has been created' in response.data
+        
