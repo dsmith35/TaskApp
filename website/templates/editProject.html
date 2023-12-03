@@ -7,12 +7,12 @@
     <div class="container">
     <hr>
     <center>	
-                <input type="text" id="name" name="name" placeholder="Project Name">
+                <input type="text" id="name" name="name" placeholder="Project Name", value="{{ project.name }}">
                 <label for="sdate">Start date:</label>
-                <input type="date" id="sdate" name="sdate">
+                <input type="date" id="sdate" name="sdate" value="{{ project.start_date.strftime('%Y-%m-%d') if project.start_date }}">
                 <label for="deadline">Deadline:</label>
                 <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
-                <input type="date" id="deadline" name="deadline" style="display: none;">
+                <input type="date" id="deadline" name="deadline" style="display: none;" value="{{ project.deadline.strftime('%Y-%m-%d') if project.deadline }}">
     </div></center>
         <center>
             <textarea id="description" name="description" placeholder="Description of Project" cols="30" rows="10" onClick="myObj.textSelect(this)"> Description of Project</textarea>
@@ -33,15 +33,6 @@
         </center>
 
         <script>
-            function getCurrentDate() {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = (now.getMonth() + 1).toString().padStart(2, '0');
-                const day = now.getDate().toString().padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-            document.getElementById("sdate").value = getCurrentDate(); //default start date
-
             function toggleDeadline(checkbox) {
                 deadline_box = document.getElementById("deadline")
                 console.log(deadline_box.value)

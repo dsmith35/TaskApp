@@ -119,33 +119,37 @@ def new_project():
 @auth.route('/editproject/<project_id>', methods=['GET','POST'])
 @login_required
 def edit_project(project_id):
-    project_id = Project.query.filter_by(id=project_id).first()
+    project = Project.query.filter_by(id=project_id).first()
     if request.method == 'POST':
         name = request.form.get('name')
         start_date = request.form.get('sdate')
+        use_deadline = request.form.get('use-deadline')
         deadline = request.form.get('deadline')
         description = request.form.get('description')
+
         if not name:
             flash('Project name is required', category='error')
         elif not start_date:
             flash('Start date is required', category='error')
-        elif deadline:
-            if start_date >= deadline:
-                flash('Start date must be before the deadline', category='error')
+        elif use_deadline and not deadline:
+            flash('No deadline given', category='error')
+        elif use_deadline and start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')   
         else:
             # Convert date strings to datetime objects (sql will only accept like this)
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
             deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
 
-            
-            Project.name=name,
-            Project.start_date=start_date,
-            Project.deadline=deadline,
-            Project.description=description,
-            Project.users=[current_user],  # Assuming you use Flask-Login to get the current user
+            #Update DB Object
+            project.name=name
+            project.start_date=start_date
+            project.deadline=deadline
+            project.description=description
 
-        db.session.commit()
-    return render_template('editProject.html', user = current_user, project_id = project_id)
+            db.session.commit()
+            flash(f"Project [{name}] Edited", category='success')
+            return render_template('project.html', user=current_user, project=project)
+    return render_template('editProject.html', user = current_user, project=project)
 
 @auth.route('/logout', methods=['GET'])
 @login_required
