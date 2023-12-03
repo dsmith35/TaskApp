@@ -252,6 +252,49 @@ def new_task(project_id):
         
     return render_template('newTask.html', user=current_user, project=project)
 
+@auth.route('edittask/<project_id>/<task_id>', methods=['GET', 'POST'])
+@login_required
+def edit_task(project_id, task_id):
+    project = Project.query.filter(Project.id == project_id).first()
+    task = Task.query.filter(Task.id == task_id).first()
+    if not task:
+        # task not found
+        return "Page Not Found", 404
+    elif not any(user.id == current_user.id for user in project.users):
+        # user doesn't have access
+        return "Access Denied", 403
+    if request.method == 'POST':
+        assignee = request.form.get('assignee')
+        description = request.form.get('description')
+        start_date = request.form.get('start_date')
+        use_deadline = request.form.get('use-deadline')
+        deadline = request.form.get('deadline')
+
+        if not description:
+            flash('Task description is required', category='error')
+        elif not start_date:
+            flash('Start date is required', category='error')
+        elif use_deadline and not deadline:
+            flash('No deadline given', category='error')
+        elif use_deadline and start_date >= deadline:
+            flash('Start date must be before the deadline', category='error')
+        else:
+            # Convert date strings to datetime objects (sql will only accept like this)
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline else datetime.strptime('9999-12-31','%Y-%m-%d')
+
+            #Update DB Object
+            task.assignee=assignee
+            task.description=description
+            task.start_date=start_date
+            task.deadline=deadline
+
+            db.session.commit()
+            flash(f'Task edited', category='success')
+            return redirect(url_for('auth.project', project_id=project_id))
+        
+    return render_template('editTask.html', user=current_user, project=project, task=task)
+
 @auth.route('/tasks')
 @login_required
 def tasks():

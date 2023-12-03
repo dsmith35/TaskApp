@@ -3,21 +3,21 @@
 
 {% block content %}
 <form method="POST">
-    <h3 align="center">New Task</h3>
+    <h3 align="center">Edit Task</h3>
     <div class="container">
     <hr>
     <center>
                 {% if not project.is_default %}
-                    <input type="text" id="assignee" name="assignee" placeholder="Assignee" value="{{current_user.name}}">
+                    <input type="text" id="assignee" name="assignee" placeholder="Assignee" value="{{ task.assignee }}">
                 {% endif %}
                 <label for="sDate">Start date:</label>
-                <input type="date" id="sDate" name="start_date">
+                <input type="date" id="sDate" name="start_date" value="{{ task.start_date.strftime('%Y-%m-%d') if task.start_date }}">
                 <label for="deadline">Deadline:</label>
                 <input type="checkbox" id="use-deadline" name="use-deadline" onclick="toggleDeadline(this);">
-                <input type="date" id="deadline" name="deadline" style="display: none;">
+                <input type="date" id="deadline" name="deadline" style="display: none;" value="{{ task.deadline.strftime('%Y-%m-%d') if task.deadline }}">
     </div></center>
         <center>
-            <textarea name="description" placeholder="Description of Task" cols="30" rows="10" onClick="myObj.textSelect(this)"></textarea>
+            <textarea name="description" placeholder="Description of Task" cols="30" rows="10" onClick="myObj.textSelect(this)" >{{ task.description }}</textarea>
 
 
             </div>
@@ -33,14 +33,6 @@
     </body>
 
     <script>
-        function getCurrentDate() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        document.getElementById("sDate").value = getCurrentDate(); //default start date
 
         function toggleDeadline(checkbox) {
             deadline_box = document.getElementById("deadline")
