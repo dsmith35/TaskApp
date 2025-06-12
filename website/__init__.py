@@ -30,11 +30,11 @@ def create_app(testing=False):
     db.init_app(app)
 
 
-    # Ensure the DB file has correct permissions
-    if not os.path.exists(db_path):
-        with open(db_path, 'w'):
-            pass  # Create the file if it doesn't exist
-        os.chmod(db_path, 0o666)  # Read & write permissions for all users
+    # # Ensure the DB file has correct permissions
+    # if not os.path.exists(db_path):
+    #     with open(db_path, 'w'):
+    #         pass  # Create the file if it doesn't exist
+    #     os.chmod(db_path, 0o666)  # Read & write permissions for all users
 
     from .views import views
     from .auth import auth
